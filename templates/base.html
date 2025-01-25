@@ -1,0 +1,137 @@
+<!-- app/templates/base.html -->
+
+<!DOCTYPE html>
+<html lang="en  ">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Corbado Example{% endblock %}</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+    <!-- Corbado web-js -->
+    <link rel="stylesheet" href="https://unpkg.com/@corbado/web-js@2/dist/bundle/index.css" />
+    <script src="https://unpkg.com/@corbado/web-js@2/dist/bundle/index.js"></script>
+
+    <!-- Corbado Initialization Script -->
+    <script>
+        window.corbadoLoadPromise = Corbado.load({
+            projectId: "{{ CORBADO_PROJECT_ID }}",
+            darkMode: "on",
+            theme: "cbo-custom-styles",
+            customTranslations: {
+                en: {
+                    signup: {
+                        "signup-init": {
+                            "signup-init": {
+                                header: "Let's create an account",
+                                subheader: "to check ",
+                                text_login: "Would you like to login? ",
+                                button_submit: "Sign up",
+                                textField_fullName: "Full Name",
+                                text_divider: "or use social logins"
+                            }
+                        }
+                    },
+                    login: {
+                        "login-init": {
+                            "login-init": {
+                                header: "Please login",
+                                subheader: "to check ",
+                                text_signup: "Would you like to create an account? ",
+                                button_signup: "Sign up",
+                                button_submit: "Login"
+                            }
+                        }
+                    },
+                    passkeysList: {
+                        button_createPasskey: "You can create passkeys here.",
+                        field_credentialId: "ID: ",
+                        field_status: "Status of Passkey: "
+                    }
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+<div>
+    <nav>
+        <a href="{{ url_for('home') }}">
+            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="Corbado Logo" height="40" width="40" />
+            <p>Corbado Example</p>
+        </a>
+        <ul>
+            <li>
+                <a href="{{ url_for('home') }}"
+                   data-selected="{{ 'true' if request.path == '/' else 'false' }}">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_area') }}"
+                   data-selected="{{ 'true' if request.path == '/userarea' else 'false' }}">
+                    User area
+                </a>
+            </li>
+            {% if not corbado_user %}
+            <li>
+                <a href="{{ url_for('signup') }}"
+                   data-selected="{{ 'true' if request.path == '/signup' else 'false' }}">
+                    Sign Up
+                </a>
+            </li>
+            <li>
+                <a href="{{ url_for('login') }}"
+                   data-selected="{{ 'true' if request.path == '/login' else 'false' }}">
+                    Login
+                </a>
+            </li>
+            {% else %}
+            <li>
+                <a href="{{ url_for('profile') }}"
+                   data-selected="{{ 'true' if request.path == '/profile' else 'false' }}">
+                    Profile
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+        {% if corbado_user %}
+        <button id="logout">Logout</button>
+        {% endif %}
+    </nav>
+</div>
+
+<main>
+    <section>
+        {% block content %}
+        <!-- Page-specific content will be injected here -->
+        {% endblock %}
+    </section>
+    <footer>
+        <a href="https://github.com/corbado/passkeys-python-flask" target="_blank">
+            <img src="{{ url_for('static', filename='images/github-icon.svg') }}" alt="GitHub icon" width="24" height="24" />
+            Github
+        </a>
+        <a href="https://docs.corbado.com/corbado-complete/frontend-integration/vanilla-js" target="_blank">
+            <img src="{{ url_for('static', filename='images/documents-icon.svg') }}" alt="Documentation icon" width="24" height="24" />
+            Documentation
+        </a>
+    </footer>
+</main>
+
+{% if corbado_user %}
+<script>
+    document.getElementById("logout").addEventListener("click", async function() {
+        await window.corbadoLoadPromise;
+        await Corbado.logout();
+        window.location.href = "/";
+    });
+</script>
+{% endif %}
+</body>
+</html>
