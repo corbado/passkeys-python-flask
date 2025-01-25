@@ -2,15 +2,17 @@
 
 from flask import Flask, g
 from flask_migrate import Migrate
+
+from .config import Config
+from .db import db
 from .utils.authentication import (
     get_authenticated_user_from_cookie,
     get_authenticated_user_from_authorization_header,
     init_corbado_sdk
 )
-from .db import db
-from .config import Config
 
 migrate = Migrate()
+
 
 def create_app():
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
@@ -35,6 +37,7 @@ def create_app():
         """
         corbado_user = get_authenticated_user_from_cookie() or get_authenticated_user_from_authorization_header()
         g.corbado_user = corbado_user
+
 
     @app.context_processor
     def inject_base_info():

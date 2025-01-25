@@ -1,13 +1,14 @@
 from flask import render_template, current_app, request, redirect, url_for, g, jsonify
-from .decorators import login_required, require_unauthenticated
-from .utils.authentication import get_user_identifiers
-from .models import User
+
 from .db import db
+from .decorators import login_required, require_unauthenticated
+from .models import User
+from .utils.authentication import get_user_identifiers
 
 app = current_app
 
 
-@app.route('/')
+@app.route('/', strict_slashes=False)
 def home():
     if not getattr(g, 'corbado_user', None):
         return render_template(
@@ -48,26 +49,32 @@ def signup():
     )
 
 
-@app.route('/signup/onboarding', methods=['GET', 'POST'], strict_slashes=False)
+@app.route('/signup/onboarding', methods=['GET'], strict_slashes=False)
 @login_required(redirect_to_login=True)
-def onboarding():
+def onboarding_get():
     corbado_user = getattr(g, 'corbado_user')
-    if request.method == 'POST':
-        user = User.query.filter_by(corbado_user_id=corbado_user.user_id).one()
-        user.city = request.form['city']
-        db.session.commit()
-        return redirect(url_for('home'))
 
     user = User.query.filter_by(corbado_user_id=corbado_user.user_id).first()
     if not user:
         user = User(corbado_user_id=corbado_user.user_id)
         db.session.add(user)
         db.session.commit()
+
     if user.city is not None:
         return redirect(url_for('profile'))
-    return render_template(
-        'onboarding.html'
-    )
+    return render_template('onboarding.html')
+
+
+@app.route('/signup/onboarding', methods=['POST'], strict_slashes=False)
+@login_required(redirect_to_login=True)
+def onboarding_post():
+    corbado_user = getattr(g, 'corbado_user')
+    user = User.query.filter_by(corbado_user_id=corbado_user.user_id).one()
+
+    user.city = request.form['city']
+    db.session.commit()
+
+    return redirect(url_for('home'))
 
 
 @app.route('/profile')
@@ -87,8 +94,7 @@ def profile():
 def get_secret():
     return jsonify({'secret': 'Passkeys are cool!'})
 
+
 @app.route('/favicon.ico', strict_slashes=False)
 def favicon_redirect():
     return redirect(url_for('static', filename='favicon.ico'))
-
-# Add other routes (e.g., signup, login, profile) as needed

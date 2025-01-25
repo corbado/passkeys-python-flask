@@ -2,6 +2,7 @@
 
 from functools import wraps
 from typing import Optional
+
 from flask import g, redirect, url_for, jsonify
 
 
@@ -36,6 +37,7 @@ def require_unauthenticated():
     Decorator factory that ensures the user is not authenticated before accessing the route.
     If the user is authenticated, it redirects to the profile page.
     """
+
     def decorator(f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

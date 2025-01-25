@@ -1,6 +1,9 @@
 from datetime import datetime
+
 from sqlalchemy import Column, Integer, String, DateTime
+
 from .db import db
+
 
 class User(db.Model):
     __tablename__ = 'users'
