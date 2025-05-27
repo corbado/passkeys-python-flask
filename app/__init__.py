@@ -47,6 +47,7 @@ def create_app():
         return {
             'CORBADO_PROJECT_ID': app.config['CORBADO_PROJECT_ID'],
             'CORBADO_FRONTEND_API': app.config['CORBADO_FRONTEND_API'],
+            'CORBADO_TELEMETRY_DISABLED': app.config['CORBADO_TELEMETRY_DISABLED'],
             'corbado_user': g.corbado_user
         }
 

@@ -12,6 +12,7 @@ class Config:
     CORBADO_API_SECRET = os.environ.get('CORBADO_API_SECRET')
     CORBADO_FRONTEND_API = os.environ.get('CORBADO_FRONTEND_API')
     CORBADO_BACKEND_API = os.environ.get('CORBADO_BACKEND_API')
+    CORBADO_TELEMETRY_DISABLED = os.environ.get('CORBADO_TELEMETRY_DISABLED', "false")
     SQLALCHEMY_DATABASE_URI = f'sqlite:///{os.path.join(BASE_DIR, "project.db")}'
     # Add other configuration variables as needed
 
