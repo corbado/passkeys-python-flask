@@ -32,6 +32,7 @@ def get_authenticated_user_from_authorization_header() -> UserEntity | None:
     session_token = request.headers.get('Authorization')
     if not session_token:
         return None
+    session_token = session_token.removeprefix("Bearer ")
     try:
         return sdk.sessions.validate_token(session_token)
     except:
